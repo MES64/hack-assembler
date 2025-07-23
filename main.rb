@@ -2,73 +2,19 @@
 
 # File Path: ~/Documents/Nand2Tetris/06/file.asm
 
-require_relative 'lib/parser'
+require_relative 'lib/code'
 
-parser = Parser.new(ARGV[0])
+code = Code.new
 
-p parser.instruction
+p code.dest('D')
+p code.comp('A')
+p code.comp('D+A')
+p code.jump('JMP')
 
-# 1
-p parser.more_lines?
-p parser.advance
-p parser.instruction
-p parser.instruction_type
-p parser.symbol
+p code.comp('ksnxks')
+p code.dest('skialk')
+p code.jump('lkxsnm')
 
-p parser.more_lines?
-p parser.advance
-p parser.instruction
-p parser.instruction_type
-p parser.dest
-p parser.comp
-p parser.jump
-
-# 2
-p parser.more_lines?
-p parser.advance
-p parser.instruction
-p parser.instruction_type
-p parser.symbol
-
-p parser.more_lines?
-p parser.advance
-p parser.instruction
-p parser.instruction_type
-p parser.dest
-p parser.comp
-p parser.jump
-
-# 3
-p parser.more_lines?
-p parser.advance
-p parser.instruction
-p parser.instruction_type
-p parser.symbol
-
-p parser.more_lines?
-p parser.advance
-p parser.instruction
-p parser.instruction_type
-p parser.dest
-p parser.comp
-p parser.jump
-
-# 4
-p parser.more_lines?
-p parser.advance
-p parser.instruction
-p parser.instruction_type
-p parser.symbol
-
-p parser.more_lines?
-p parser.advance
-p parser.instruction
-p parser.instruction_type
-p parser.dest
-p parser.comp
-p parser.jump
-
-p parser.more_lines?
-p parser.advance
-p parser.instruction
-p parser.more_lines?
+p code.dest(nil)
+p code.jump(nil)
+p code.comp(nil)
