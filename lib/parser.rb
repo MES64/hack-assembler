@@ -13,13 +13,21 @@ class Parser
     @instruction = ''
   end
 
+  def close_file
+    file.close
+  end
+
   def more_lines?
     !file.eof?
   end
 
+  def no_instruction?
+    instruction.empty? || instruction.start_with?('//')
+  end
+
   def advance
     self.instruction = file.gets.strip
-    self.instruction = file.gets.strip while (instruction.empty? || instruction.start_with?('//')) && more_lines?
+    self.instruction = file.gets.strip while no_instruction? && more_lines?
   end
 
   def instruction_type
