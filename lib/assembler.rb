@@ -9,28 +9,28 @@ require_relative 'code'
 # It then translates each symbol into binary code, with the help of Code
 # Finally, it appends it all together and puts it into the output file
 class Assembler
-  attr_reader :parser, :code
+  attr_reader :parser, :code, :output_file
   attr_accessor :counter
 
   def initialize
     @parser = Parser.new(ARGV[0])
     @code = Code.new
     @counter = 0
+    @output_file = File.open("#{ARGV[0].split('.')[0]}.hack", 'w')
   end
 
   def asm_to_binary
-    output_filename = "#{ARGV[0].split('.')[0]}.hack"
-    output_file = File.open(output_filename, 'w')
     while parser.more_lines?
       parser.advance
       # In case there were initially more lines but they contained no instructions...
       break if parser.no_instruction?
 
-      output_file.puts instruction_to_binary unless parser.instruction_type == :L_INSTRUCTION
-      self.counter = counter + 1
+      unless parser.instruction_type == :L_INSTRUCTION
+        output_file.puts instruction_to_binary
+        self.counter = counter + 1
+      end
     end
-    parser.close_file
-    output_file.close
+    close_files
   end
 
   private
@@ -45,6 +45,7 @@ class Assembler
     # Note that all A-instructions/addresses must begin with a 0
     "0#{format('%015b', parser.symbol)[-15..]}"
   rescue StandardError
+    close_files
     raise "Error: Invalid instruction #{parser.instruction} at line #{counter}"
   end
 
@@ -53,8 +54,16 @@ class Assembler
     jjj = code.jump(parser.jump)
     acccccc = code.comp(parser.comp)
     c_instruction = "111#{acccccc}#{ddd}#{jjj}"
-    raise "Error: Invalid instruction #{parser.instruction} at line #{counter}" if c_instruction.length < 16
+    if c_instruction.length < 16
+      close_files
+      raise "Error: Invalid instruction #{parser.instruction} at line #{counter}"
+    end
 
     c_instruction
+  end
+
+  def close_files
+    parser.close_file
+    output_file.close
   end
 end
