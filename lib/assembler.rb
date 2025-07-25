@@ -10,7 +10,7 @@ require_relative 'code'
 # Finally, it appends it all together and puts it into the output file
 class Assembler
   attr_reader :parser, :code, :output_file, :symbol_table
-  attr_accessor :counter
+  attr_accessor :counter, :register_number
 
   def initialize
     @parser = Parser.new(ARGV[0])
@@ -40,6 +40,7 @@ class Assembler
                       'THAT' => '4',
                       'SCREEN' => '16384',
                       'KBD' => '24576' }
+    @register_number = 16
   end
 
   def asm_to_binary
@@ -67,6 +68,11 @@ class Assembler
   def to_16bit
     symbol = parser.symbol
     number = symbol.match?(/^\d+$/) ? symbol : symbol_table[symbol]
+    if number.nil?
+      symbol_table[symbol] = register_number
+      number = register_number
+      self.register_number += 1
+    end
     # Note that all A-instructions/addresses must begin with a 0
     "0#{format('%015b', number)[-15..]}"
   rescue StandardError
