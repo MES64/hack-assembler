@@ -9,8 +9,8 @@ require_relative 'code'
 # It then translates each symbol into binary code, with the help of Code
 # Finally, it appends it all together and puts it into the output file
 class Assembler
-  attr_reader :parser, :code, :output_file, :symbol_table
-  attr_accessor :counter, :register_number
+  attr_reader :code, :output_file, :symbol_table
+  attr_accessor :parser, :counter, :register_number
 
   def initialize
     @parser = Parser.new(ARGV[0])
@@ -43,7 +43,31 @@ class Assembler
     @register_number = 16
   end
 
+  def assemble
+    add_label_symbols
+    asm_to_binary
+  end
+
+  def add_label_symbols
+    self.parser = Parser.new(ARGV[0])
+    self.counter = 0
+    while parser.more_lines?
+      parser.advance
+      # In case there were initially more lines but they contained no instructions...
+      break if parser.no_instruction?
+
+      if parser.instruction_type == :L_INSTRUCTION
+        symbol_table[parser.symbol] = counter
+      else
+        self.counter = counter + 1
+      end
+    end
+    parser.close_file
+  end
+
   def asm_to_binary
+    self.parser = Parser.new(ARGV[0])
+    self.counter = 0
     while parser.more_lines?
       parser.advance
       # In case there were initially more lines but they contained no instructions...

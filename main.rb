@@ -4,4 +4,4 @@
 
 require_relative 'lib/assembler'
 
-Assembler.new.asm_to_binary
+Assembler.new.assemble
