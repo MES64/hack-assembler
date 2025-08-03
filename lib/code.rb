@@ -10,10 +10,12 @@ class Code
                   'M' => '001',
                   'D' => '010',
                   'DM' => '011',
+                  'MD' => '011', # To make it work for an older specification
                   'A' => '100',
                   'AM' => '101',
                   'AD' => '110',
-                  'ADM' => '111' }
+                  'ADM' => '111',
+                  'AMD' => '111' } # To make it work for an older specification
     @jump_map = { nil => '000',
                   'JGT' => '001',
                   'JEQ' => '010',
